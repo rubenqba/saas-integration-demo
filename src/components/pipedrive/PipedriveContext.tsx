@@ -1,31 +1,39 @@
-import { getGithubRepositories } from "@action/github";
 import { getPipedriveContacts } from "@action/pipedrive";
-import { GithubRepository } from "@model/github";
-import { PipedriveContact } from "@model/pipedrive";
-import { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import { CrmContact } from "@unified-api/typescript-sdk/sdk/models/shared";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
 
-interface GithubContextProps {
-  reloadContacts: () => void;
-  contacts: PipedriveContact[];
+interface CrmContextProps {
+  isLoading: boolean;
+  reloadContacts: (connection: string) => void;
+  contacts: CrmContact[];
 }
 
-const ModalContext = createContext<GithubContextProps | undefined>(undefined);
+const ModalContext = createContext<CrmContextProps | undefined>(undefined);
 
 export const PipedriveProvider = ({ children }: { children: ReactNode }) => {
-  const [contacts, setContacts] = useState<PipedriveContact[]>([]);
+  const [contacts, setContacts] = useState<CrmContact[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const reload = useCallback(async () => {
-    const { data, error } = await getPipedriveContacts();
+  const reload = useCallback(async (connection: string) => {
+    setLoading(true);
+    const { data, error } = await getPipedriveContacts(connection);
     if (error) {
       toast.error(error);
-      return;
+    } else {
+      setContacts(data ?? []);
     }
-    setContacts(data ?? []);
+    setLoading(false);
   }, []);
-  
+
   return (
-    <ModalContext.Provider value={{ reloadContacts: reload, contacts }}>
+    <ModalContext.Provider value={{ isLoading: loading, reloadContacts: reload, contacts }}>
       {children}
     </ModalContext.Provider>
   );

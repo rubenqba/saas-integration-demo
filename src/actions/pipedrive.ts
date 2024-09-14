@@ -1,25 +1,29 @@
 "use server";
 
 import environment from "@lib/environment";
-import session from "@lib/session";
-import { GithubRepository } from "@model/github";
-import { PipedriveContact } from "@model/pipedrive";
-import { Nango } from "@nangohq/node";
+import { UnifiedTo } from "@unified-api/typescript-sdk";
+import { CrmContact } from "@unified-api/typescript-sdk/sdk/models/shared";
 
-export async function getPipedriveContacts(): Promise<{
-  data: PipedriveContact[] | null;
+export async function getPipedriveContacts(connection_id: string): Promise<{
+  data: CrmContact[] | null;
   error?: string;
 }> {
-  const nango = new Nango({ secretKey: environment.NANGO_SECRET_KEY });
+  const sdk = new UnifiedTo({
+    security: {
+      jwt: environment.UNIFIED_SECRET_KEY,
+    },
+  });
 
   try {
-    const response = await nango.listRecords({
-      providerConfigKey: "pipedrive",
-      connectionId: session.user_id,
-      model: "PipeDrivePerson",
+    const results = await sdk.crm.listCrmContacts({
+      connectionId: connection_id,
+      limit: 10,
+      offset: 0,
+      sort: "updated_at",
+      order: "desc",
     });
-    console.debug(JSON.stringify(response, null, 2));
-    return { data: response.records as PipedriveContact[] };
+    // console.debug(JSON.stringify(results, null, 2));
+    return { data: results };
   } catch (err) {
     return {
       data: null,

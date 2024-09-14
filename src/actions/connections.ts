@@ -1,9 +1,21 @@
+"use server";
+
 import environment from "@lib/environment";
 import session from "@lib/session";
-import { Nango } from "@nangohq/node";
+import { Connection } from "@model/connections";
+import { UnifiedTo } from "@unified-api/typescript-sdk";
 
 export async function getConnections() {
-  const nango = new Nango({ secretKey: environment.NANGO_SECRET_KEY });
+  const sdk = new UnifiedTo({
+    security: {
+      jwt: environment.UNIFIED_SECRET_KEY,
+    },
+  });
+  const data = await sdk.connection.listUnifiedConnections({
+    externalXref: session.user_id,
+  });
 
-  return await nango.listConnections(session.user_id);
+  console.debug("Connections", data);
+
+  return data as Connection[];
 }

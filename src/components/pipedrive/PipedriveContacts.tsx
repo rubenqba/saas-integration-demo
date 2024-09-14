@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -10,25 +11,30 @@ import {
 } from "@nextui-org/react";
 import React, { useEffect } from "react";
 import { PipedriveProvider, usePipedriveProvider } from "./PipedriveContext";
+import { formatDistance } from "date-fns";
 
 type ConnectionTableProps = {
   title: string;
+  connection: string;
 };
 
-const PipedriveContactsTable = ({ title }: Readonly<ConnectionTableProps>) => {
+const PipedriveContactsTable = ({
+  title,
+  connection,
+}: Readonly<ConnectionTableProps>) => {
   const columns = [
     { id: "id", label: "ID" },
     { id: "name", label: "Contact name" },
     { id: "email", label: "Contact email" },
-    { id: "label", label: "Labels" },
+    { id: "company", label: "Company" },
     { id: "date_created", label: "Created" },
   ];
 
-  const { contacts, reloadContacts } = usePipedriveProvider();
+  const { isLoading, contacts, reloadContacts } = usePipedriveProvider();
 
   useEffect(() => {
-    reloadContacts();
-  }, [reloadContacts]);
+    reloadContacts(connection);
+  }, [connection, reloadContacts]);
 
   return (
     <div className="border border-indigo-600 mt-5">
@@ -38,14 +44,27 @@ const PipedriveContactsTable = ({ title }: Readonly<ConnectionTableProps>) => {
             <TableColumn key={column.id}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent="No contacts yet" items={contacts}>
+        <TableBody
+          emptyContent="No contacts yet"
+          items={contacts}
+          isLoading={isLoading}
+          loadingContent={<Spinner color="primary" />}
+        >
           {(item) => (
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
               <TableCell>{item.name}</TableCell>
-              <TableCell>{item.cc_email}</TableCell>
-              <TableCell>{item.label}</TableCell>
-              <TableCell>{item.add_time}</TableCell>
+              <TableCell>
+                {item.emails?.map((email) => email.email).join(",")}
+              </TableCell>
+              <TableCell>{item.company}</TableCell>
+              <TableCell>
+                {item.createdAt
+                  ? formatDistance(item.createdAt, Date.now(), {
+                      addSuffix: true,
+                    })
+                  : ""}
+              </TableCell>
             </TableRow>
           )}
         </TableBody>
@@ -56,10 +75,11 @@ const PipedriveContactsTable = ({ title }: Readonly<ConnectionTableProps>) => {
 
 export default function PipedriveContacts({
   title,
+  connection,
 }: Readonly<ConnectionTableProps>) {
   return (
     <PipedriveProvider>
-      <PipedriveContactsTable title={title} />
+      <PipedriveContactsTable title={title} connection={connection} />
     </PipedriveProvider>
   );
 }

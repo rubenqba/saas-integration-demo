@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 const schema = z.object({
-    NANGO_SECRET_KEY: z.string(),
+    UNIFIED_WORKSPACE: z.string(),
+    UNIFIED_SECRET_KEY: z.string(),
 });
 
 export type Config = z.infer<typeof schema>;

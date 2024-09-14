@@ -1,30 +1,29 @@
 "use client";
-import GithubRepositories from "@component/github/GithubRepositories";
 import PipedriveContacts from "@component/pipedrive/PipedriveContacts";
-import { NangoConnection } from "@model/connections";
+import { Connection } from "@model/connections";
 import { Tab, Tabs } from "@nextui-org/react";
 import React from "react";
 
 type ResultPanelProps = {
   title: string;
-  providers: NangoConnection[];
+  providers: Connection[];
 };
 
 export default function ResultPanel({
   title,
   providers,
 }: Readonly<ResultPanelProps>) {
-  const render = (item: NangoConnection) => {
+  const render = (item: Connection) => {
     const selectComponent = () => {
-      switch (item.provider) {
-        case "github":
-          return <GithubRepositories title={item.provider} />;
+      switch (item.integrationType) {
+        case "pipedrive":
+          return <PipedriveContacts title={item.integrationType} connection={item.id}/>;
         default:
-          return <PipedriveContacts title={item.provider} />;
+          return <div />;
       }
     };
     return (
-      <Tab key={item.id} title={item.provider}>
+      <Tab key={item.id} title={item.integrationType}>
         {selectComponent()}
       </Tab>
     );

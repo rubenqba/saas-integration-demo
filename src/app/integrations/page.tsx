@@ -1,36 +1,16 @@
-import { getIntegrations } from "@action/integrations";
-import NangoIntegrationCard from "@component/integrations/NangoIntegrationCard";
+import UnifiedDirectory from "@component/integrations/UnifiedDirectory";
+import environment from "@lib/environment";
+import session from "@lib/session";
 
 export default async function Home() {
-  const { configs } = await getIntegrations();
   return (
-    <section className="mx-auto p-4">
-      <div className="w-full">
-        <h1 className="text-2xl font-bold">Integrations</h1>
-        <div className="grid grid-cols-3 justify-items-center gap-4 mt-4">
-          {configs.map((i) => (
-            <NangoIntegrationCard
-              key={i.unique_key}
-              integration={i}
-              className="mt-5"
-            />
-          ))}
-          {configs.map((i) => (
-            <NangoIntegrationCard
-              key={i.unique_key}
-              integration={i}
-              className="mt-5"
-            />
-          ))}
-          {configs.map((i) => (
-            <NangoIntegrationCard
-              key={i.unique_key}
-              integration={i}
-              className="mt-5"
-            />
-          ))}
-        </div>
-      </div>
-    </section>
+    <UnifiedDirectory
+      workspace_id={environment.UNIFIED_WORKSPACE}
+      // categories={["crm"]}
+      external_xref={session.user_id}
+      success_redirect={"http://localhost:3000/integrations/completed"}
+      failure_redirect={"http://localhost:3000/integrations/failure"}
+      environment={"Production"}
+    />
   );
 }

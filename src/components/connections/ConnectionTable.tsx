@@ -1,7 +1,9 @@
 "use client";
 
-import { NangoConnection } from "@model/connections";
+import ProviderImage from "@component/integrations/ProviderImage";
+import { Connection } from "@model/connections";
 import {
+  Chip,
   Table,
   TableBody,
   TableCell,
@@ -10,10 +12,11 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import React from "react";
+import { formatDistance } from "date-fns";
 
 type ConnectionTableProps = {
   title: string;
-  connections: NangoConnection[];
+  connections: Connection[];
 };
 
 export default function ConnectionTable({
@@ -23,7 +26,9 @@ export default function ConnectionTable({
   const columns = [
     { id: "id", label: "ID" },
     { id: "provider", label: "Provider" },
-    { id: "key", label: "Provider Config Key" },
+    { id: "environment", label: "Environment" },
+    { id: "categories", label: "Categories" },
+    { id: "paused", label: "Status" },
     { id: "created", label: "Created" },
   ];
   return (
@@ -39,10 +44,26 @@ export default function ConnectionTable({
           <TableBody emptyContent="No connections yet" items={connections}>
             {(item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
-                <TableCell>{item.provider}</TableCell>
-                <TableCell>{item.provider_config_key}</TableCell>
-                <TableCell>{item.created}</TableCell>
+                <TableCell className="text-indigo-600 font-semibold">
+                  {item.id}
+                </TableCell>
+                <TableCell>
+                  <ProviderImage provider={item.integrationType} />
+                </TableCell>
+                <TableCell>{item.environment}</TableCell>
+                <TableCell>
+                  {item.categories.map((c) => (
+                    <Chip key={c} color="primary" variant="flat">
+                      {c}
+                    </Chip>
+                  ))}
+                </TableCell>
+                <TableCell>{item.isPaused ? "Paused" : "Active"}</TableCell>
+                <TableCell>
+                  {formatDistance(item.createdAt, Date.now(), {
+                    addSuffix: true,
+                  })}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

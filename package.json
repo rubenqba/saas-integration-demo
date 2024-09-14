@@ -9,9 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@nangohq/frontend": "^0.42.9",
-    "@nangohq/node": "^0.42.9",
     "@nextui-org/react": "^2.4.6",
+    "@unified-api/react-directory": "^1.1.17",
+    "@unified-api/typescript-sdk": "^2.5.0",
+    "date-fns": "4.0.0-beta.1",
     "framer-motion": "^11.5.4",
     "next": "14.2.9",
     "react": "^18",

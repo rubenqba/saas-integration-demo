@@ -1,9 +1,17 @@
 import environment from "@lib/environment";
-import { Nango } from "@nangohq/node";
+import { UnifiedTo } from "@unified-api/typescript-sdk";
 
 export async function getIntegrations() {
-    
-    const nango = new Nango({ secretKey: environment.NANGO_SECRET_KEY});
+  const sdk = new UnifiedTo({
+    security: {
+      jwt: environment.UNIFIED_SECRET_KEY,
+    },
+  });
+  const data = await sdk.integration.listUnifiedIntegrationWorkspaces({
+    workspaceId: environment.UNIFIED_WORKSPACE,
+  });
 
-    return await nango.listIntegrations()
+  console.debug("Integrations", data);
+
+  return data;
 }
