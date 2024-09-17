@@ -15,15 +15,15 @@ export default function ResultPanel({
 }: Readonly<ResultPanelProps>) {
   const render = (item: Connection) => {
     const selectComponent = () => {
-      switch (item.integrationType) {
+      switch (item.service_id) {
         case "pipedrive":
-          return <PipedriveContacts title={item.integrationType} connection={item.id}/>;
+          return <PipedriveContacts title={item.name ?? 'noname'} connection={item.service_id ?? ''}/>;
         default:
           return <div />;
       }
     };
     return (
-      <Tab key={item.id} title={item.integrationType}>
+      <Tab key={item.id} title={item.name}>
         {selectComponent()}
       </Tab>
     );

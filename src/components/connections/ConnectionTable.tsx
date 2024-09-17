@@ -3,7 +3,6 @@
 import ProviderImage from "@component/integrations/ProviderImage";
 import { Connection } from "@model/connections";
 import {
-  Chip,
   Table,
   TableBody,
   TableCell,
@@ -25,11 +24,10 @@ export default function ConnectionTable({
 }: Readonly<ConnectionTableProps>) {
   const columns = [
     { id: "id", label: "ID" },
-    { id: "provider", label: "Provider" },
-    { id: "environment", label: "Environment" },
-    { id: "categories", label: "Categories" },
-    { id: "paused", label: "Status" },
-    { id: "created", label: "Created" },
+    { id: "service_id", label: "Provider" },
+    { id: "unified_api", label: "Category" },
+    { id: "state", label: "Status" },
+    { id: "created_at", label: "Created" },
   ];
   return (
     <>
@@ -48,21 +46,21 @@ export default function ConnectionTable({
                   {item.id}
                 </TableCell>
                 <TableCell>
-                  <ProviderImage provider={item.integrationType} />
+                  <div className="flex items-center gap-2 ">
+                    <ProviderImage provider={item.service_id ?? "undefined"} />
+                    <span className="ml-2">{item.name}</span>
+                  </div>
                 </TableCell>
-                <TableCell>{item.environment}</TableCell>
+                <TableCell>{item.unified_api}</TableCell>
                 <TableCell>
-                  {item.categories.map((c) => (
-                    <Chip key={c} color="primary" variant="flat">
-                      {c}
-                    </Chip>
-                  ))}
+                  {item.state === "callable" ? "Active" : "Not used"}
                 </TableCell>
-                <TableCell>{item.isPaused ? "Paused" : "Active"}</TableCell>
                 <TableCell>
-                  {formatDistance(item.createdAt, Date.now(), {
-                    addSuffix: true,
-                  })}
+                  {item.created_at
+                    ? formatDistance(item.created_at, Date.now(), {
+                        addSuffix: true,
+                      })
+                    : ""}
                 </TableCell>
               </TableRow>
             )}

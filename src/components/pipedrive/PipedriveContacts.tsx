@@ -57,10 +57,10 @@ const PipedriveContactsTable = ({
               <TableCell>
                 {item.emails?.map((email) => email.email).join(",")}
               </TableCell>
-              <TableCell>{item.company}</TableCell>
+              <TableCell>{item.company_name}</TableCell>
               <TableCell>
-                {item.createdAt
-                  ? formatDistance(item.createdAt, Date.now(), {
+                {item.created_at
+                  ? formatDistance(item.created_at, Date.now(), {
                       addSuffix: true,
                     })
                   : ""}

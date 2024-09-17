@@ -2,11 +2,13 @@ import { getConnections } from "@action/connections";
 import ConnectionTable from "@component/connections/ConnectionTable";
 
 export default async function Home() {
-  const connections = await getConnections();
-  console.debug(connections);
+  const { data: connections } = await getConnections();
   return (
     <section className="mx-auto p-4">
-      <ConnectionTable title="Connection list" connections={connections} />
+      <ConnectionTable
+        title="Connection list"
+        connections={connections ?? []}
+      />
     </section>
   );
 }

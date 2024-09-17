@@ -1,5 +1,5 @@
 import { getPipedriveContacts } from "@action/pipedrive";
-import { CrmContact } from "@unified-api/typescript-sdk/sdk/models/shared";
+import { CrmContact } from "@model/crm";
 import {
   createContext,
   ReactNode,
